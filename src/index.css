@@ -1,0 +1,15 @@
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.info {
+  display: flex;
+  /* gap: 10px; */
+  justify-content: space-around;
+  /* padding: 10px; */
+}
+.hidden {
+  display: none;
+}
