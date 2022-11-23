@@ -1,10 +1,11 @@
-import markup from './js/markupCreate';
-import { getPhotos } from './js/fetchPhotos';
+import { GetPhotos } from './js/fetchPhotos';
 import { createMarkup } from './js/markupCreate';
 import Notiflix from 'notiflix';
 const searchFormEl = document.querySelector('.search-form');
 const galleryDivEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
+
+const pixabayApi = new GetPhotos();
 
 async function onFormSubmitCreateMarkup(event) {
   const searchQuery = event.target.searchQuery.value.trim().toLowerCase();
@@ -13,20 +14,27 @@ async function onFormSubmitCreateMarkup(event) {
   try {
     if (searchQuery) {
       galleryDivEl.innerHTML = '';
-      const { data } = await getPhotos(searchQuery);
+      pixabayApi.query = searchQuery;
+      const { data } = await pixabayApi.getPhotos();
+      console.log(data.hits);
       let markup = createMarkup(data.hits);
       galleryDivEl.insertAdjacentHTML('beforeend', markup.join(''));
+      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
       searchFormEl.reset();
-      btnLoadMore.classList.remove('hidden');
+      if (data.totalHits > 40) {
+        btnLoadMore.classList.remove('hidden');
+      }
     }
   } catch (error) {
-    Notiflix.Notify.failure('error');
+    Notiflix.Notify.failure(
+      'Sorry, there are no images mathing your search query. Please try again'
+    );
   }
 }
 
 async function onBtnLoadMoreClick(event) {
-  getPhotos.page += 1;
-  const { data } = await getPhotos();
+  pixabayApi.incrementPage();
+  const { data } = await pixabayApi.getPhotos();
   let markup = createMarkup(data.hits);
   galleryDivEl.insertAdjacentHTML('beforeend', markup.join(''));
 }
