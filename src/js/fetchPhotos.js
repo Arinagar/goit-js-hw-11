@@ -6,6 +6,7 @@ export class GetPhotos {
   #page = 1;
   #per_page = 40;
   #query = '';
+  #total_photos;
 
   async getPhotos() {
     const response = await axios.get(
@@ -15,6 +16,7 @@ export class GetPhotos {
         this.#per_page
       }&page=${this.#page}`
     );
+    this.#total_photos = response.data.totalHits;
     return response;
   }
   get query() {
@@ -28,5 +30,8 @@ export class GetPhotos {
   }
   resetPage() {
     this.#page = 1;
+  }
+  morePagesExists() {
+    return this.#page < Math.ceil(this.#total_photos / this.#per_page);
   }
 }

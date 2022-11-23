@@ -15,6 +15,8 @@ async function onFormSubmitCreateMarkup(event) {
   }
   try {
     galleryDivEl.innerHTML = '';
+    btnLoadMore.classList.add('hidden');
+
     pixabayApi.query = searchQuery;
     const { data } = await pixabayApi.getPhotos();
     console.log(data.hits);
@@ -22,7 +24,7 @@ async function onFormSubmitCreateMarkup(event) {
     galleryDivEl.insertAdjacentHTML('beforeend', markup.join(''));
     Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     searchFormEl.reset();
-    if (data.totalHits > 40) {
+    if (pixabayApi.morePagesExists()) {
       btnLoadMore.classList.remove('hidden');
     }
   } catch (error) {
@@ -34,6 +36,9 @@ async function onFormSubmitCreateMarkup(event) {
 
 async function onBtnLoadMoreClick(event) {
   pixabayApi.incrementPage();
+  if (!pixabayApi.morePagesExists()) {
+    btnLoadMore.classList.add('hidden');
+  }
   const { data } = await pixabayApi.getPhotos();
   let markup = createMarkup(data.hits);
   galleryDivEl.insertAdjacentHTML('beforeend', markup.join(''));

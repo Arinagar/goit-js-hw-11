@@ -3,7 +3,7 @@ const galleryDivEl = document.querySelector('.gallery');
 function createMarkup(data) {
   const galleryElement = data.map(el => {
     return `<div class="photo-card">
-  <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
+  <a><img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>${el.likes} Likes</b>
