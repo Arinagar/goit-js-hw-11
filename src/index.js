@@ -10,20 +10,20 @@ const pixabayApi = new GetPhotos();
 async function onFormSubmitCreateMarkup(event) {
   const searchQuery = event.target.searchQuery.value.trim().toLowerCase();
   event.preventDefault();
-
+  if (!searchQuery) {
+    return;
+  }
   try {
-    if (searchQuery) {
-      galleryDivEl.innerHTML = '';
-      pixabayApi.query = searchQuery;
-      const { data } = await pixabayApi.getPhotos();
-      console.log(data.hits);
-      let markup = createMarkup(data.hits);
-      galleryDivEl.insertAdjacentHTML('beforeend', markup.join(''));
-      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-      searchFormEl.reset();
-      if (data.totalHits > 40) {
-        btnLoadMore.classList.remove('hidden');
-      }
+    galleryDivEl.innerHTML = '';
+    pixabayApi.query = searchQuery;
+    const { data } = await pixabayApi.getPhotos();
+    console.log(data.hits);
+    let markup = createMarkup(data.hits);
+    galleryDivEl.insertAdjacentHTML('beforeend', markup.join(''));
+    Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+    searchFormEl.reset();
+    if (data.totalHits > 40) {
+      btnLoadMore.classList.remove('hidden');
     }
   } catch (error) {
     Notiflix.Notify.failure(
